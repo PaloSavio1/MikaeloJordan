@@ -11,6 +11,11 @@ enum class KeyCode
     D = 0x44,
     Space = 0x20,
     Escape = 0x1B,
+    Enter = 0x0D,
+    Left = 0x25,
+    Up = 0x26,
+    Right = 0x27,
+    Down = 0x28,
     // ... más teclas
 };
 

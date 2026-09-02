@@ -19,6 +19,7 @@ struct Card : public Entity
     float pitch = 0.0f;
     float zoom = 1.0f;
     bool hover = false;
+    bool inHand = true;
     bool flipping = false;
     float flipStartYaw = 0.0f;
     float flipTargetYaw = 0.0f;
