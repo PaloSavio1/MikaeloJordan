@@ -19,7 +19,7 @@ XMMATRIX Card::WorldMatrix() const
 
 const std::wstring& Card::Texture(bool back) const
 {
-    static const std::wstring backTexture = L"Cartas/KcriaGames.png";
+    static const std::wstring backTexture = L"Assets/Cartas/a1 (1).png";
     return back ? backTexture : frontTexture;
 }
 

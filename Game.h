@@ -5,11 +5,17 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
+#include <objidl.h>
+#include <gdiplus.h>
 
 #include "InputManager.h"
 #include "CardInteraction.h"
+#include "TurnSystem.h"
 #include <iostream>
 #include <filesystem>
+#include <algorithm>
+
+#pragma comment(lib, "gdiplus.lib")
 
 class Game
 {
@@ -26,6 +32,8 @@ public:
 class MyGame final : public Game
 {
 public:
+    MyGame() : m_turnSystem(m_eventBus, m_rules, "Jugador") {}
+
     void SetInputManager(InputManager* input) noexcept
     {
         m_input = input;
@@ -39,15 +47,26 @@ public:
         }
 
         m_window = window;
-        OnResize(width, height);
-        if (std::filesystem::exists(L"Cartas"))
+        Gdiplus::GdiplusStartupInput gdiplusInput;
+        if (Gdiplus::GdiplusStartup(&m_gdiplusToken, &gdiplusInput, nullptr) != Gdiplus::Ok)
         {
-            for (const auto& file : std::filesystem::directory_iterator(L"Cartas"))
+            std::cerr << "ERROR: No se pudo inicializar GDI+" << std::endl;
+            return false;
+        }
+        std::cout << "GDI+ inicializado correctamente" << std::endl;
+        OnResize(width, height);
+        auto& resourceManager = ResourceManager::getInstance();
+        const std::filesystem::path cardsDirectory = L"Assets/Cartas";
+        const std::filesystem::path mapsDirectory = L"Assets/Maps";
+        if (std::filesystem::exists(cardsDirectory))
+        {
+            for (const auto& file : std::filesystem::directory_iterator(cardsDirectory))
             {
-                if (file.path().extension() == L".png" && file.path().filename() != L"KcriaGames.png")
+                if (file.path().extension() == L".png")
                 {
                     Card card;
-                    card.frontTexture = file.path().wstring();
+                    card.frontTexture = file.path().generic_wstring();
+                    resourceManager.loadTexture(file.path().generic_string());
                     const float x = -220.0f + static_cast<float>(m_cards.size() % 4) * 145.0f;
                     const float y = 120.0f - static_cast<float>(m_cards.size() / 4) * 190.0f;
                     card.position = { x, y, 0.0f };
@@ -55,7 +74,31 @@ public:
                 }
             }
         }
+        if (std::filesystem::exists(mapsDirectory))
+        {
+            for (const auto& file : std::filesystem::directory_iterator(mapsDirectory))
+            {
+                if (file.path().extension() == L".png")
+                {
+                    m_mapTexture = file.path().generic_string();
+                    break;
+                }
+            }
+        }
+        if (!m_mapTexture.empty())
+        {
+            resourceManager.loadTexture(m_mapTexture);
+        }
+        m_turnSystem.SetResourceManager(resourceManager);
+        m_turnSystem.SetMapTexture(m_mapTexture);
+        m_turnSystem.SetDrawAction([this]()
+        {
+            if (m_cards.empty()) return std::vector<std::string>{};
+            m_drawnCard = m_cards[m_nextCard++ % m_cards.size()].frontTexture;
+            return std::vector<std::string>{ std::filesystem::path(m_drawnCard).generic_string() };
+        });
         m_interaction.SetCards(&m_cards);
+        m_turnSystem.StartTurn();
         m_isInitialized = true;
         return true;
     }
@@ -83,7 +126,8 @@ public:
 
         if (m_input->IsKeyPressed(KeyCode::Space))
         {
-            std::cout << "Space pressed!\n";
+            m_turnSystem.NextPhase();
+            std::cout << "Fase actual: " << static_cast<int>(m_turnSystem.CurrentPhase()) << '\n';
         }
 
         if (m_input->IsMouseButtonPressed(MouseButton::Left))
@@ -128,6 +172,23 @@ public:
             Ellipse(hdc, centerX - radius + offset, centerY - radius,
                     centerX + radius + offset, centerY + radius);
 
+            const std::wstring& imagePath = m_turnSystem.CurrentPhase() == TurnPhase::Action
+                ? std::wstring(m_mapTexture.begin(), m_mapTexture.end())
+                : m_drawnCard;
+            if (!imagePath.empty() && (m_turnSystem.CurrentPhase() == TurnPhase::Deploy ||
+                m_turnSystem.CurrentPhase() == TurnPhase::Action))
+            {
+                Gdiplus::Image image(imagePath.c_str());
+                if (image.GetLastStatus() == Gdiplus::Ok)
+                {
+                    const int imageWidth = m_turnSystem.CurrentPhase() == TurnPhase::Action ? 700 : 180;
+                    const int imageHeight = m_turnSystem.CurrentPhase() == TurnPhase::Action ? 450 : 260;
+                    Gdiplus::Graphics graphics(hdc);
+                    graphics.DrawImage(&image, centerX - imageWidth / 2, centerY - imageHeight / 2,
+                        imageWidth, imageHeight);
+                }
+            }
+
             SelectObject(hdc, oldPen);
         }
 
@@ -152,6 +213,11 @@ public:
     void Shutdown() override
     {
         m_isInitialized = false;
+        if (m_gdiplusToken != 0)
+        {
+            Gdiplus::GdiplusShutdown(m_gdiplusToken);
+            m_gdiplusToken = 0;
+        }
         m_window = nullptr;
         m_input = nullptr;
     }
@@ -163,6 +229,13 @@ private:
     int m_height = 0;
     float m_rotation = 0.0f;
     std::vector<Card> m_cards;
+    std::wstring m_drawnCard;
+    std::string m_mapTexture;
+    std::size_t m_nextCard = 0;
     CardInteraction m_interaction;
+    EventBus m_eventBus;
+    Rules m_rules;
+    TurnSystem m_turnSystem;
     bool m_isInitialized = false;
+    ULONG_PTR m_gdiplusToken = 0;
 };

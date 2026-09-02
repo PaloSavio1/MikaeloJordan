@@ -8,9 +8,10 @@
 #include <DirectXMath.h>
 #include <string>
 #include <vector>
+#include "Entity.h"
 #include "InputManager.h"
 
-struct Card
+struct Card : public Entity
 {
     std::wstring frontTexture;
     DirectX::XMFLOAT3 position{};
@@ -25,6 +26,9 @@ struct Card
 
     DirectX::XMMATRIX WorldMatrix() const;
     const std::wstring& Texture(bool back) const;
+
+    void update() override {}
+    void render() override {}
 };
 
 class CardInteraction

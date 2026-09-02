@@ -5,16 +5,43 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{D9E84E0D-0D70-4A57-8A75-0A0B0B3F6C01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Cartas">
+      <UniqueIdentifier>{F1B1F4C8-0F68-4B69-9C9D-C9D8B9F9AA01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Maps">
+      <UniqueIdentifier>{A2AAB7F2-4A6B-4C2D-8D49-3B7C3B0E7D02}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Archivos de origen">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Entity.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="EventBus.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Faction.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEntities.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Rules.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Win32Application.h">
@@ -31,5 +58,13 @@
     <ClCompile Include="Win32Application.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Cartas\*.png">
+      <Filter>Assets\Cartas</Filter>
+    </None>
+    <None Include="Assets\Maps\*.png">
+      <Filter>Assets\Maps</Filter>
+    </None>
   </ItemGroup>
 </Project>
