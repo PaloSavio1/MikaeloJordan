@@ -15,3 +15,7 @@ por destruir al hermano, sino por romper el cristal que los une.
 ## Marca
 
 © 2026 Kcria Games & Entertainment. Todos los derechos reservados.
+
+## Web Oficial
+
+Visita la página oficial del juego: [N.C. – Núcleo de Cristal](https://sage-alfajores-389535.netlify.app)
