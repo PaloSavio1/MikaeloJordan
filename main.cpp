@@ -16,9 +16,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
         FILE* fDummy;
         freopen_s(&fDummy, "CONOUT$", "w", stdout);
         freopen_s(&fDummy, "CONOUT$", "w", stderr);
-        SetConsoleTitle(L"Debug Console - MikaeloJordan");
+        SetConsoleTitle(L"Debug Console - N.C. - Núcleo de Cristal");
         std::cout << "========================================" << std::endl;
-        std::cout << "   MIKAELOJORDAN - CARD GAME" << std::endl;
+        std::cout << "   N.C. - NUCLEO DE CRISTAL" << std::endl;
         std::cout << "   Version: 0.1.0" << std::endl;
         std::cout << "   Starting..." << std::endl;
         std::cout << "========================================" << std::endl << std::endl;
@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
     // ============================================
     // 2. CONFIGURACIÓN DEL JUEGO
     // ============================================
-    const wchar_t* WINDOW_TITLE = L"MikaeloJordan - NarniaViva";
+    const wchar_t* WINDOW_TITLE = L"N.C. - Núcleo de Cristal";
     const int WINDOW_WIDTH = 1024;
     const int WINDOW_HEIGHT = 768;
 
